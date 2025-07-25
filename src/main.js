@@ -62,6 +62,9 @@ function handleSubmit(event) {
       createGallery(data.hits);
     })
     .catch(error => {
-      throw new Error(error);
+      return error;
+    })
+    .finally(() => {
+      hideLoader();
     });
 }
