@@ -19,12 +19,37 @@ const input = formSearch.querySelector('input[name="search-text"]');
 
 formSearch.addEventListener('submit', handleSubmit);
 
+function showError(message) {
+  iziToast.error({
+    message,
+    position: 'topRight',
+    iconUrl: warningIcon,
+    progressBarColor: '#ffffff',
+    messageColor: '#ffffff',
+    titleColor: '#ffffff',
+    backgroundColor: '#ef4040',
+    timeout: 2000,
+    close: true,
+    onOpening: (instance, toast) => {
+      const closeBtn = toast.querySelector('.iziToast-close');
+      if (closeBtn) {
+        closeBtn.style.backgroundImage = `url(${closeIcon})`;
+        closeBtn.style.backgroundSize = '12px 12px';
+        closeBtn.style.backgroundRepeat = 'no-repeat';
+        closeBtn.style.backgroundPosition = 'center';
+        closeBtn.style.color = '#ffffff';
+      }
+    },
+  });
+}
+
 function handleSubmit(event) {
   event.preventDefault();
 
   const query = input.value.toLowerCase().trim();
 
   if (query === '') {
+    showError('Please enter a search query.');
     return;
   }
 
@@ -33,36 +58,17 @@ function handleSubmit(event) {
 
   getImagesByQuery(query)
     .then(data => {
-      hideLoader();
-
       if (data.hits.length === 0) {
-        iziToast.error({
-          message: `Sorry, there are no images matching your search query. Please try again!`,
-          position: 'topRight',
-          iconUrl: warningIcon,
-          progressBarColor: '#ffffff',
-          messageColor: '#ffffff',
-          titleColor: '#ffffff',
-          backgroundColor: '#ef4040',
-          timeout: 2000,
-          close: true,
-          onOpening: (instance, toast) => {
-            const closeBtn = toast.querySelector('.iziToast-close');
-            if (closeBtn) {
-              closeBtn.style.backgroundImage = `url(${closeIcon})`;
-              closeBtn.style.backgroundSize = '12px 12px';
-              closeBtn.style.backgroundRepeat = 'no-repeat';
-              closeBtn.style.backgroundPosition = 'center';
-              closeBtn.style.color = '#ffffff';
-            }
-          },
-        });
+        showError(
+          'Sorry, there are no images matching your search query. Please try again!'
+        );
         return;
       }
       createGallery(data.hits);
     })
     .catch(error => {
-      return error;
+      console.error('Fetch error:', error);
+      showError('Something went wrong. Please try again later.');
     })
     .finally(() => {
       hideLoader();

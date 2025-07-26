@@ -163,3 +163,7 @@ body {
   letter-spacing: 0.04em;
   color: #2e2f42;
 }
+
+span {
+  display: block;
+}
