@@ -13,6 +13,8 @@ import {
   hideLoader,
 } from './js/render-functions';
 
+hideLoader();
+
 const formSearch = document.querySelector('.form');
 
 const input = formSearch.querySelector('input[name="search-text"]');
